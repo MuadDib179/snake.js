@@ -1,5 +1,6 @@
 var run = true;
 var direction          = [1,0];
+var sugestedDirection  = direction;
 var body               = [];
 var bodyPositions      = [];
 var addChild           = false;
@@ -10,6 +11,7 @@ function move(){
         bodyPositions[length - (i + 1)] = bodyPositions[length - (i + 2)];
     }
     
+    direction = sugestedDirection;
     bodyPositions[0] = [
                             42*direction[0] + parseInt(body[0].style.left, 10),
                             42*direction[1] + parseInt(body[0].style.top, 10)
@@ -41,6 +43,7 @@ window.onload = function(){
     body[0] = head;
     bodyPositions[0] = [250,250];
     add();
+    add();
     gameLoop();
 
     document.body.onclick = function(){
@@ -52,22 +55,22 @@ document.addEventListener("keydown", function(event){
         case 38:
             //upp
             if(direction[1] !== 1)    
-                direction = [0,-1];
+                sugestedDirection = [0,-1];
             break;
         case 40:
             //down
             if(direction[1] !== -1)
-                direction = [0 , 1];
+                sugestedDirection = [0 , 1];
             break;
         case 37:
             //left
             if(direction[0] !== 1)
-                direction = [-1, 0];
+                sugestedDirection = [-1, 0];
             break;
         case 39:
             //right
             if(direction[0] !== -1)
-                direction = [1,0];
+                sugestedDirection = [1,0];
             break;
     }
 })
