@@ -4,7 +4,11 @@ var sugestedDirection  = direction;
 var body               = [];
 var bodyPositions      = [];
 var addChild           = false;
-
+var fieldSize          = [];
+var fieldSizeInTiles   = [];
+var foodPosition       = [];
+var food;
+//#region snake stuff
 function move(){
     let length = bodyPositions.length;
     for(let i = 0; i < body.length; i++){
@@ -15,8 +19,22 @@ function move(){
     bodyPositions[0] = [
                             42*direction[0] + parseInt(body[0].style.left, 10),
                             42*direction[1] + parseInt(body[0].style.top, 10)
-                            ];   
+                        ];   
     
+    if(fieldSize[0] < bodyPositions[0][0])
+        bodyPositions[0][0] = 84;
+    else if(bodyPositions[0][0] < 84)
+        bodyPositions[0][0] = fieldSize[0];
+    else if(fieldSize[1] < bodyPositions[0][1])
+        bodyPositions[0][1] = 84;
+    else if(bodyPositions[0][1] < 84)
+        bodyPositions[0][1] = fieldSize[1];
+    else if(bodyPositions[0][0] == foodPosition[0] &&
+            bodyPositions[0][1] == foodPosition[1]){
+        spawnFood();
+        add();
+    }
+
     update();
 }
 function update(){
@@ -29,23 +47,75 @@ function add(){
     bodyPositions[bodyPositions.length] = [0,0];
     body[body.length] = makeSnakeBit(bodyPositions[body.length-1]);
 }
+//#endregion
+//#region field stuff
+function setUpField(){
+    //removing 84 pixels to account for the border margin
+    fieldSize[0] = 42*Math.floor((document.body.offsetWidth-84)/42);
+    fieldSize[1] = 42*Math.floor((document.body.offsetHeight-84)/42);
+    //sets the walls of the field
+    document.body.appendChild(createWall(40,fieldSize[1]+40,[42,42]));    
+    document.body.appendChild(createWall(fieldSize[0]+40,40,[42,42]));
+    document.body.appendChild(createWall(40,fieldSize[1]+40,[fieldSize[0]+42,42]));
+    document.body.appendChild(createWall(fieldSize[0]+40,40,[42,fieldSize[1]+42]));
+    
+    //sets the food div
+    food = document.getElementById("food");
+    //sets the field size in tiles(snake bits)
+    fieldSizeInTiles[0] = fieldSize[0]/42;
+    fieldSizeInTiles[1] = fieldSize[1]/42;
+    //spawns food
+    spawnFood();
+    function createWall(width,height, position){
+        let wall = document.createElement("div");
+        wall.style.width            = width;
+        wall.style.height           = height;
+        wall.style.backgroundColor  = "#f078d0";
+        wall.style.position         = "absolute";
+        wall.style.left             = position[0];
+        wall.style.top              = position[1];
 
+        return wall;
+    }
+}
+function spawnFood(){
+    let set = false;
+    do{
+        set = false;
+        foodPosition = [
+                        84+42*Math.round(Math.random()*(fieldSizeInTiles[0]-2)),
+                        84+42*Math.round(Math.random()*(fieldSizeInTiles[1]-2))
+                    ];
+        for(let i = 0; i < bodyPositions.length; i++){
+            if(foodPosition[0] == bodyPositions[i][0] &&
+                foodPosition[1] == bodyPositions[i][1]){
+                    set = true;
+                    console.log("stopped food from spawning inside snake");
+            }
+        }
+    }while(set);
+
+    food.style.left = foodPosition[0];
+    food.style.top  = foodPosition[1];
+}
+
+//#endregion
 window.onload = function(){
+    setUpField();
+    
     let head = document.createElement("div");
     head.style.width = "40";
     head.style.height = "40";
     head.style.backgroundColor = "red";
     head.style.position = "absolute";
-    head.style.top = 250;
-    head.style.left = 250;
+    head.style.top = 336;
+    head.style.left = 336;
     this.document.body.appendChild(head);
 
     body[0] = head;
     bodyPositions[0] = [250,250];
-    add();
-    add();
+    add();add();add();add();add();
     gameLoop();
-
     document.body.onclick = function(){
         run = run ? false : true;
     }
@@ -94,7 +164,7 @@ async function gameLoop(){
             // console.log("shit");
         }
 
-        await sleep(333);
+        await sleep(160);
     }
 }
 
