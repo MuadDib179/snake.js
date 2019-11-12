@@ -9,6 +9,29 @@ var fieldSizeInTiles   = [];
 var foodPosition       = [];
 var food;
 //#region snake stuff
+function collisions(){
+    if(fieldSize[0] < bodyPositions[0][0])
+        bodyPositions[0][0] = 84;
+    else if(bodyPositions[0][0] < 84)
+        bodyPositions[0][0] = fieldSize[0];
+    else if(fieldSize[1] < bodyPositions[0][1])
+        bodyPositions[0][1] = 84;
+    else if(bodyPositions[0][1] < 84)
+        bodyPositions[0][1] = fieldSize[1];
+    else if(bodyPositions[0][0] == foodPosition[0] &&
+        bodyPositions[0][1] == foodPosition[1]){
+        spawnFood();
+        add();
+    }
+    else{
+        for(let i = 2; i < bodyPositions.length; i++){
+            if(bodyPositions[0][0] == bodyPositions[i][0] &&
+                bodyPositions[0][1] == bodyPositions[i][1])
+                location.reload();
+        }
+    }
+
+}
 function move(){
     let length = bodyPositions.length;
     for(let i = 0; i < body.length; i++){
@@ -20,21 +43,8 @@ function move(){
                             42*direction[0] + parseInt(body[0].style.left, 10),
                             42*direction[1] + parseInt(body[0].style.top, 10)
                         ];   
-    
-    if(fieldSize[0] < bodyPositions[0][0])
-        bodyPositions[0][0] = 84;
-    else if(bodyPositions[0][0] < 84)
-        bodyPositions[0][0] = fieldSize[0];
-    else if(fieldSize[1] < bodyPositions[0][1])
-        bodyPositions[0][1] = 84;
-    else if(bodyPositions[0][1] < 84)
-        bodyPositions[0][1] = fieldSize[1];
-    else if(bodyPositions[0][0] == foodPosition[0] &&
-            bodyPositions[0][1] == foodPosition[1]){
-        spawnFood();
-        add();
-    }
 
+    collisions();
     update();
 }
 function update(){
@@ -44,8 +54,8 @@ function update(){
     }
 }
 function add(){
-    bodyPositions[bodyPositions.length] = [0,0];
-    body[body.length] = makeSnakeBit(bodyPositions[body.length-1]);
+    bodyPositions[bodyPositions.length] = bodyPositions[bodyPositions.length-1];
+    body[body.length] = makeSnakeBit(bodyPositions[bodyPositions.length-1]);
 }
 //#endregion
 //#region field stuff
@@ -113,7 +123,7 @@ window.onload = function(){
     this.document.body.appendChild(head);
 
     body[0] = head;
-    bodyPositions[0] = [250,250];
+    bodyPositions[0] = [336,336];
     add();add();add();add();add();
     gameLoop();
     document.body.onclick = function(){
@@ -146,6 +156,7 @@ document.addEventListener("keydown", function(event){
 })
 
 function makeSnakeBit(position){
+    console.log(position[0]);
     let div = document.createElement("div");
     div.style.width = "40";
     div.style.height = "40";
@@ -164,7 +175,7 @@ async function gameLoop(){
             // console.log("shit");
         }
 
-        await sleep(160);
+        await sleep(80);
     }
 }
 
