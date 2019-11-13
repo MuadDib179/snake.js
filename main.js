@@ -18,7 +18,8 @@ function collisions(){
         bodyPositions[0][1] = 84;
     else if(bodyPositions[0][1] < 84)
         bodyPositions[0][1] = fieldSize[1];
-    else if(bodyPositions[0][0] == foodPosition[0] &&
+    
+    if(bodyPositions[0][0] == foodPosition[0] &&
         bodyPositions[0][1] == foodPosition[1]){
         spawnFood();
         add();
@@ -43,7 +44,6 @@ function move(){
                             42*direction[0] + parseInt(body[0].style.left, 10),
                             42*direction[1] + parseInt(body[0].style.top, 10)
                         ];   
-
     collisions();
     update();
 }
@@ -156,7 +156,6 @@ document.addEventListener("keydown", function(event){
 })
 
 function makeSnakeBit(position){
-    console.log(position[0]);
     let div = document.createElement("div");
     div.style.width = "40";
     div.style.height = "40";
@@ -175,7 +174,7 @@ async function gameLoop(){
             // console.log("shit");
         }
 
-        await sleep(80);
+        await sleep(260);
     }
 }
 
