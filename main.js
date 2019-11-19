@@ -1,6 +1,49 @@
+//#region suggestedDirections()
+class SuggestedDirections{
+    constructor(){
+        this.nextDirection = null;
+    }
+    add(newDirection){
+        let invertedNewDirection = this.inverse(newDirection);
+        if(this.nextDirection === null){
+            if(snakeDirection[0] !== invertedNewDirection[0] &&
+                snakeDirection[1] !== invertedNewDirection[1])
+            this.nextDirection = new Direction(newDirection, null); 
+        }
+        else{
+            if(this.nextDirection.direction[0] !== invertedNewDirection[0] &&
+                this.nextDirection.direction[1] !== invertedNewDirection[1])//for whatever reason you cant directly compare the inverted array??
+                this.nextDirection.nextDirection = new Direction(newDirection, null); 
+        }
+    }
+    get(){
+        let newDirection = null
+        if(this.nextDirection !== null){
+            newDirection = this.nextDirection.direction;
+            this.nextDirection = this.nextDirection.nextDirection;
+        }
+        return newDirection;
+    }
+    inverse(arr){ //inverses every number in the array
+        let ret = [arr[0],arr[1]];
+        if(arr[0] !== 0)
+            ret[0] = arr[0]*-1
+        if(arr[1] !== 0)
+            ret[1] = arr[1]*-1    
+        return ret
+        // return [(arr[0] == 0) ? arr[0] : arr[0]*-1,(a[1] == 0) ? a[1] : a[1]*-1]; xD
+    }
+}
+class Direction{
+    constructor(direction, nextDirection){
+        this.direction = direction;
+        this.nextDirection = null;
+    }
+}
+//#endregion
 var run = true;
-var direction          = [1,0];
-var sugestedDirection  = direction;
+var suggestedDirections  = new SuggestedDirections();
+var snakeDirection     = [1,0];
 var body               = [];
 var bodyPositions      = [];
 var addChild           = false;
@@ -38,11 +81,10 @@ function move(){
     for(let i = 0; i < body.length; i++){
         bodyPositions[length - (i + 1)] = bodyPositions[length - (i + 2)];
     }
-    
-    direction = sugestedDirection;
+    snakeDirection = suggestedDirections.get() || snakeDirection;
     bodyPositions[0] = [
-                            42*direction[0] + parseInt(body[0].style.left, 10),
-                            42*direction[1] + parseInt(body[0].style.top, 10)
+                            42*snakeDirection[0] + parseInt(body[0].style.left, 10),
+                            42*snakeDirection[1] + parseInt(body[0].style.top, 10)
                         ];   
     collisions();
     update();
@@ -134,27 +176,22 @@ document.addEventListener("keydown", function(event){
     switch(event.keyCode){
         case 38:
             //upp
-            if(direction[1] !== 1)    
-                sugestedDirection = [0,-1];
+            suggestedDirections.add([0,-1]);
             break;
         case 40:
             //down
-            if(direction[1] !== -1)
-                sugestedDirection = [0 , 1];
+            suggestedDirections.add([0 , 1]);
             break;
         case 37:
             //left
-            if(direction[0] !== 1)
-                sugestedDirection = [-1, 0];
+            suggestedDirections.add([-1, 0]);
             break;
         case 39:
             //right
-            if(direction[0] !== -1)
-                sugestedDirection = [1,0];
+            suggestedDirections.add([1,0]);
             break;
     }
 })
-
 function makeSnakeBit(position){
     let div = document.createElement("div");
     div.style.width = "40";
@@ -174,7 +211,7 @@ async function gameLoop(){
             // console.log("shit");
         }
 
-        await sleep(260);
+        await sleep(86);
     }
 }
 
