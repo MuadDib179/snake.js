@@ -1,17 +1,74 @@
 <html>
     <head>
         <script src="main.js"></script>
-        <style>
+        <style type="text/css">
             #food{
                 width: 40px;
                 height: 40px;
                 background-color: black;
                 position: absolute;
+                top: 366px;
+                left: 366px;
+            }
+            .menu{
+                z-index: 1;
+                width: 40px;
+                position: absolute;
+                background-color: #f078d0;
+                transition: .5s;
+                font-size: 30px;
+                font-family: Arial;
+            }
+            .menu.open{
+                transition: .5s;
+            }
+
+            .menu .button{
+                visibility: hidden;
+                opacity: 0%;
+            }
+            .menu.open .button{
+                visibility: visible;
+                width: 30%;
+                height: 42px;
+                padding-top: 10px;
+                margin: auto;
+                margin-top: 42px;
+                background-color: yellow;
+                text-align: center;
+                border-radius: 15px;
+                border: 5px solid yellow;
+                opacity: 100%;
+                transition: .3s;
+                
+            }
+            .menu.open .button:hover{
+                background-color: rgb(240, 120, 208, 0);
+                border: 5px solid yellow;
+                border-radius: 0px;
+                transition: .3s;
+            }
+
+            .menu .content{
+                margin: auto;
+                visibility: hidden;
+                opacity: 0%;
+            }
+            .menu.open .content{
+                visibility: visible;
+                text-align: center;
+                margin-top: 42px;
+                opacity: 100%;
+                width: 100%;
+                height: 42px;
             }
         </style>
     </head>
     <body>
     <div id="food"></div>
-        
     </body>
+    <div class="menu open" id="menu">
+        <div id="button" class="button" onclick="reset();">restart game</div>
+        <div id="score" class="content">|insert name|: score</div>
+    </div>
 </html>
