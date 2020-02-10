@@ -37,24 +37,26 @@ class SuggestedDirections{
 class Direction{
     constructor(direction, nextDirection){
         this.direction = direction;
-        this.nextDirection = null;
+        this.nextDirection = nextDirection;
     }
 }
 //#endregion
-var run = false;
-var suggestedDirections  = new SuggestedDirections();
-var snakeDirection     = [1,0];
-var body               = [];
-var bodyPositions      = [];
-var addChild           = false;
-var fieldSize          = [];
-var fieldSizeInTiles   = [];
-var foodPosition       = [];
+var score               = 0;
+var run                 = false;
+var suggestedDirections = new SuggestedDirections();
+var snakeDirection      = [1,0];
+var body                = [];
+var bodyPositions       = [];
+var addChild            = false;
+var fieldSize           = [];
+var fieldSizeInTiles    = [];
+var foodPosition        = [];
 var food;
 var menuWall;
+var scoreBoard;
 //#region snake stuff
 function collisions(){
-    if(fieldSize[0] < bodyPositions[0][0])
+    if(fieldSize[0] < bodyPositions[0][0]) //makes the snake wrap around at the field borders
         bodyPositions[0][0] = 84;
     else if(bodyPositions[0][0] < 84)
         bodyPositions[0][0] = fieldSize[0];
@@ -63,8 +65,11 @@ function collisions(){
     else if(bodyPositions[0][1] < 84)
         bodyPositions[0][1] = fieldSize[1];
     
-    if(bodyPositions[0][0] == foodPosition[0] &&
+    if(bodyPositions[0][0] == foodPosition[0] && //eat
         bodyPositions[0][1] == foodPosition[1]){
+        
+        score++;
+        updateScore();
         spawnFood();
         add();
         add();
@@ -144,7 +149,8 @@ function setUpField(init){
         //sets up the menu transition
         document.styleSheets[0].insertRule(".menu.open{width: "+fieldSize[0]+"px !important}",0);
         //sets the menu-wall
-        menuWall = document.getElementById("menu");
+        menuWall    = document.getElementById("menu");
+        scoreBoard  = document.getElementById("scoreBoard");
     }
     else{
         //sets the walls of the field   
@@ -159,6 +165,7 @@ function setUpField(init){
         //spawns food
         spawnFood();
     }
+
     function createWall(width,height, position){
         let wall = document.createElement("div");
         wall.style.width            = width;
@@ -190,7 +197,9 @@ function spawnFood(){
     food.style.left = foodPosition[0];
     food.style.top  = foodPosition[1];
 }
-
+function updateScore(){
+    scoreBoard.innerHTML = "<b>SCORE: " + score +"</b>";
+}
 //#endregion
 //#region menu logic
 function reset(){
@@ -256,7 +265,7 @@ async function gameLoop(){
             move();
         }
 
-        await sleep(90);
+        await sleep(200);
     }
 }
 
